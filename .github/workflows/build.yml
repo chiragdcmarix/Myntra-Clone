@@ -21,13 +21,6 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
-            -Dsonar.projectKey=my_project_key  # Set your project key here
-            -Dsonar.projectName="My Project Name"  # Optionally set your project name
-            -Dsonar.sources=./src  # Define the directory to analyze (adjust path as needed)
-
-      # Uncomment if you want to enforce quality gate checks
-      # - name: SonarQube Quality Gate
-      #   uses: sonarsource/sonarqube-quality-gate-action@v1
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            -Dsonar.projectKey=my_project_key
+            -Dsonar.projectName="My Project Name"
+            -Dsonar.sources=./src
