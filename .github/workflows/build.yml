@@ -8,22 +8,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3  # Updated to v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          fetch-depth: 0  # Shallow clones disabled for better relevancy of analysis
+          node-version: '20'  # Explicitly setting Node.js 20
 
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v1  # Use a stable tag like 'v1'
+        uses: sonarsource/sonarqube-scan-action@v1  # Using stable tag 'v1'
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Token for SonarQube authentication
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  # SonarQube host URL
 
-      # Uncomment if you want to enforce quality gate checks
+      # Optional: Uncomment to enforce quality gate checks
       # - name: SonarQube Quality Gate
-      #   uses: sonarsource/sonarqube-quality-gate-action@v1  # Use a stable version like 'v1'
+      #   uses: sonarsource/sonarqube-quality-gate-action@v1  # Use stable version 'v1'
       #   timeout-minutes: 5
       #   env:
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
