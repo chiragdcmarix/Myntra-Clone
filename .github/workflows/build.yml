@@ -21,7 +21,7 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@v1
         with:
           args: >
-            -Dsonar.projectKey=sqp_6aa16b70acc20b99ab4da7f8d304932548e86ad2
+            -Dsonar.projectKey=sqp_fd55a3b76b892681f4df9690728f97bbf9ff8149
             -Dsonar.projectName="myntra"
             -Dsonar.sources=./src
             -X
