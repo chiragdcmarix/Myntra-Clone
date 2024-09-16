@@ -22,7 +22,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=sqp_6aa16b70acc20b99ab4da7f8d304932548e86ad2
-            -Dsonar.projectName="My Project Name"
+            -Dsonar.projectName="myntra"
             -Dsonar.sources=./src
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
