@@ -22,22 +22,31 @@ jobs:
       - name: Check Docker Setup
         run: docker --version
 
+      # Install Docker Scout
+      - name: Install Docker Scout
+        run: |
+          curl -fsSL https://downloads.docker.com/cli/scout/linux/amd64/docker-scout-linux-amd64.tar.gz -o docker-scout-linux-amd64.tar.gz
+          tar xz -C /usr/local/bin -f docker-scout-linux-amd64.tar.gz
+        
+      # Docker Login
       - name: Docker Login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Docker Scout Scan
       - name: Docker Scout Scan
         run: |
           docker-scout quickview fs://.
           docker-scout cves fs://.
+
+      # Build and Push Docker Image
       - name: Docker build and push
         run: |
-          # Run commands to build and push Docker images
           docker build -t myntra .
           docker tag myntra sevenajay/myntra:latest
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker push jinesh1893/myntra:latest
-        env:
-          DOCKER_CLI_ACI: 1
+          docker push sevenajay/myntra:latest
+
+      # Docker Scout Image Scan
       - name: Docker Scout Image Scan
         run: |
-          docker-scout quickview jinesh1893/myntra:latest
-          docker-scout cves jinesh1893/myntra:latest
+          docker-scout quickview sevenajay/myntra:latest
+          docker-scout cves sevenajay/myntra:latest
