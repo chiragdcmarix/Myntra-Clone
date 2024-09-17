@@ -30,7 +30,7 @@ jobs:
       - name: Check Network Connectivity
         run: |
           nslookup downloads.docker.com
-          curl -I https://downloads.docker.com
+          curl -I https://downloads.docker.com || echo "Failed to reach Docker downloads server"
 
       # Install Docker Scout with fallback
       - name: Install Docker Scout
