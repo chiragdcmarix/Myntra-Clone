@@ -22,47 +22,22 @@ jobs:
       - name: Check Docker Setup
         run: docker --version
 
-      # Docker login
       - name: Docker Login
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
-      # Debug network connectivity
-      - name: Check Network Connectivity
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Docker Scout Scan
         run: |
-          nslookup downloads.docker.com
-          curl -I https://downloads.docker.com || echo "Failed to reach Docker downloads server"
-
-      # Install Docker Scout with fallback
-      - name: Install Docker Scout
-        run: |
-          if curl -fsSL https://downloads.docker.com/cli/scout/linux/amd64/docker-scout-linux-amd64.tar.gz -o docker-scout-linux-amd64.tar.gz; then
-            echo "Docker Scout downloaded successfully"
-            tar xz -C /usr/local/bin -f docker-scout-linux-amd64.tar.gz
-          else
-            echo "Failed to download Docker Scout from Docker's servers"
-            echo "Attempting alternative installation or using another tool..."
-            exit 1
-          fi
-
-      # Docker Scout Scan - File system
-      - name: Docker Scout Scan (File System)
-        run: |
-          docker scout quickview fs://.
-          docker scout cves fs://.
-
-      # Build and Push Docker Image
+          docker-scout quickview fs://.
+          docker-scout cves fs://.
       - name: Docker build and push
         run: |
-          IMAGE_NAME=jinesh1893/myntra:latest
+          # Run commands to build and push Docker images
           docker build -t myntra .
-          docker tag myntra $IMAGE_NAME
-          docker push $IMAGE_NAME
+          docker tag myntra sevenajay/myntra:latest
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          docker push jinesh1893/myntra:latest
         env:
           DOCKER_CLI_ACI: 1
-
-      # Docker Scout Scan - Image
-      - name: Docker Scout Scan (Image)
+      - name: Docker Scout Image Scan
         run: |
-          IMAGE_NAME=jinesh1893/myntra:latest
-          docker scout quickview $IMAGE_NAME
-          docker scout cves $IMAGE_NAME
+          docker-scout quickview jinesh1893/myntra:latest
+          docker-scout cves jinesh1893/myntra:latest
