@@ -22,9 +22,13 @@ jobs:
       - name: Check Docker Setup
         run: docker --version
 
-      # Docker login
+      # Docker login with debugging
       - name: Docker Login
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          echo "Attempting Docker login..."
+          echo "${{ secrets.DOCKERHUB_USERNAME }}"
+          echo "${{ secrets.DOCKERHUB_TOKEN }}"
+          echo "${{ secrets.DOCKERHUB_USERNAME }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       # Docker Scout Scan - File system
       - name: Docker Scout Scan (File System)
@@ -37,8 +41,8 @@ jobs:
         run: |
           IMAGE_NAME=jinesh1893/myntra:latest
           docker build -t myntra .
-          docker tag myntra $myntra
-          docker push myntra
+          docker tag myntra $IMAGE_NAME
+          docker push $IMAGE_NAME
         env:
           DOCKER_CLI_ACI: 1
 
@@ -46,5 +50,5 @@ jobs:
       - name: Docker Scout Scan (Image)
         run: |
           IMAGE_NAME=jinesh1893/myntra:latest
-          docker run --rm docker/scout-cli:latest quickview myntra
-          docker run --rm docker/scout-cli:latest cves myntra
+          docker run --rm docker/scout-cli:latest quickview $IMAGE_NAME
+          docker run --rm docker/scout-cli:latest cves $IMAGE_NAME
