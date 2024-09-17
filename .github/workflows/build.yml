@@ -30,11 +30,11 @@ jobs:
       - name: Docker build and push
         run: |
           docker build -t myntra .
-          docker tag myntra sevenajay/myntra:latest
-          docker push sevenajay/myntra:latest
+          docker tag myntra jinesh1893/myntra:latest
+          docker push jinesh1893/myntra:latest
 
       # Docker Scout Image Scan
       - name: Docker Scout Image Scan
         run: |
-          docker-scout quickview sevenajay/myntra:latest
-          docker-scout cves sevenajay/myntra:latest
+          docker-scout quickview jinesh1893/myntra:latest
+          docker-scout cves jinesh1893/myntra:latest
