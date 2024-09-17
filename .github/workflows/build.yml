@@ -5,7 +5,6 @@ on:
     branches:
       - main
 
-
 jobs:
   build:
     name: Build
@@ -13,14 +12,43 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0  # Disable shallow clones for better SonarQube analysis
+
+      # SonarQube Scan
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
+
+      # Uncomment the following lines if you want to fail the job when the Quality Gate fails
       # - uses: sonarsource/sonarqube-quality-gate-action@master
       #   timeout-minutes: 5
       #   env:
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # Docker login
+      - name: Docker Login
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Docker Scout Scan - File system
+      - name: Docker Scout Scan
+        run: |
+          docker-scout quickview fs://.
+          docker-scout cves fs://.
+
+      # Build and Push Docker Image
+      - name: Docker build and push
+        run: |
+          IMAGE_NAME=jinesh1893/myntra:latest
+          docker build -t myntra .
+          docker tag myntra $IMAGE_NAME
+          docker push $IMAGE_NAME
+        env:
+          DOCKER_CLI_ACI: 1
+
+      # Docker Scout Scan - Image
+      - name: Docker Scout Image Scan
+        run: |
+          IMAGE_NAME=jinesh1893/myntra:latest
+          docker-scout quickview $IMAGE_NAME
+          docker-scout cves $IMAGE_NAME
