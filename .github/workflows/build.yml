@@ -26,10 +26,15 @@ jobs:
       - name: Docker Login
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      # Install Docker Scout
+      # Install Docker Scout with alternative method
       - name: Install Docker Scout
         run: |
-          curl -fsSL https://downloads.docker.com/cli/scout/linux/amd64/docker-scout-linux-amd64.tar.gz | tar xz -C /usr/local/bin
+          if curl -fsSL https://downloads.docker.com/cli/scout/linux/amd64/docker-scout-linux-amd64.tar.gz -o docker-scout-linux-amd64.tar.gz; then
+            tar xz -C /usr/local/bin -f docker-scout-linux-amd64.tar.gz
+          else
+            echo "Failed to download Docker Scout"
+            exit 1
+          fi
 
       # Docker Scout Scan - File system
       - name: Docker Scout Scan (File System)
@@ -42,14 +47,14 @@ jobs:
         run: |
           IMAGE_NAME=jinesh1893/myntra:latest
           docker build -t myntra .
-          docker tag myntra Myntra
-          docker push MyntraE
+          docker tag myntra $IMAGE_NAME
+          docker push $IMAGE_NAME
         env:
           DOCKER_CLI_ACI: 1
 
       # Docker Scout Scan - Image
-      - name: Myntra
+      - name: Docker Scout Scan (Image)
         run: |
           IMAGE_NAME=jinesh1893/myntra:latest
-          docker scout quickview Myntra
-          docker scout cves Myntra
+          docker scout quickview $IMAGE_NAME
+          docker scout cves $IMAGE_NAME
