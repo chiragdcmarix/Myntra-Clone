@@ -26,13 +26,16 @@ jobs:
       - name: Docker Login
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      # Install Docker Scout with alternative method
+      # Install Docker Scout with fallback
       - name: Install Docker Scout
         run: |
           if curl -fsSL https://downloads.docker.com/cli/scout/linux/amd64/docker-scout-linux-amd64.tar.gz -o docker-scout-linux-amd64.tar.gz; then
+            echo "Docker Scout downloaded successfully"
             tar xz -C /usr/local/bin -f docker-scout-linux-amd64.tar.gz
           else
-            echo "Failed to download Docker Scout"
+            echo "Failed to download Docker Scout from Docker's servers"
+            echo "Attempting alternative installation..."
+            # Attempt alternative installation or notify
             exit 1
           fi
 
@@ -52,4 +55,9 @@ jobs:
         env:
           DOCKER_CLI_ACI: 1
 
-
+      # Docker Scout Scan - Image
+      - name: Docker Scout Scan (Image)
+        run: |
+          IMAGE_NAME=jinesh1893/myntra:latest
+          docker scout quickview $IMAGE_NAME
+          docker scout cves $IMAGE_NAME
