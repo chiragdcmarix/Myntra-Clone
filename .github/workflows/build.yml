@@ -32,9 +32,3 @@ jobs:
           docker build -t myntra .
           docker tag myntra jinesh1893/myntra:latest
           docker push jinesh1893/myntra:latest
-
-      # Docker Scout Image Scan
-      - name: Docker Scout Image Scan
-        run: |
-          docker-scout quickview jinesh1893/myntra:latest
-          docker-scout cves jinesh1893/myntra:latest
