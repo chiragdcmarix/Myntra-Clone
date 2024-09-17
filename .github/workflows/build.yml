@@ -24,30 +24,32 @@ jobs:
 
       # Docker login
       - name: Docker Login
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      # Install Docker Scout
+      - name: Install Docker Scout
         run: |
-          echo "Attempting Docker login..."
-          echo "${{ secrets.DOCKERHUB_USERNAME }}"
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+          curl -fsSL https://downloads.docker.com/cli/scout/linux/amd64/docker-scout-linux-amd64.tar.gz | tar xz -C /usr/local/bin
 
       # Docker Scout Scan - File system
       - name: Docker Scout Scan (File System)
         run: |
-          docker run --rm -v $(pwd):/app docker/scout-cli:latest quickview fs:///app
-          docker run --rm -v $(pwd):/app docker/scout-cli:latest cves fs:///app
+          docker scout quickview fs://.
+          docker scout cves fs://.
 
       # Build and Push Docker Image
       - name: Docker build and push
         run: |
           IMAGE_NAME=jinesh1893/myntra:latest
           docker build -t myntra .
-          docker tag myntra $IMAGE_NAME
-          docker push $IMAGE_NAME
+          docker tag myntra Myntra
+          docker push MyntraE
         env:
           DOCKER_CLI_ACI: 1
 
       # Docker Scout Scan - Image
-      - name: Docker Scout Scan (Image)
+      - name: Myntra
         run: |
           IMAGE_NAME=jinesh1893/myntra:latest
-          docker run --rm docker/scout-cli:latest quickview $IMAGE_NAME
-          docker run --rm docker/scout-cli:latest cves $IMAGE_NAME
+          docker scout quickview Myntra
+          docker scout cves Myntra
