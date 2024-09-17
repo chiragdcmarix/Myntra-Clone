@@ -31,7 +31,7 @@ jobs:
           docker build -t myntra .
           docker tag myntra jinesh1893/myntra:latest
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker push sevenajay/myntra:latest
+          docker push jinesh1893/myntra:latest
         env:
           DOCKER_CLI_ACI: 1
       - name: Docker Scout Image Scan
